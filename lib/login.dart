@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class Login extends StatelessWidget {
   const Login({super.key});
 
+  void loginHandler() {}
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,10 +69,11 @@ class Login extends StatelessWidget {
           ),
           obscureText: true,
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 48),
         ElevatedButton(
           onPressed: () {
             // TODO: Implement login functionality
+            loginHandler();
           },
           style: ElevatedButton.styleFrom(
             shape: const StadiumBorder(),
