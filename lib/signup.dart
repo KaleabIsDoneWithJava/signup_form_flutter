@@ -104,7 +104,7 @@ class Signup extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Colors.purple,
+                      backgroundColor: const Color.fromARGB(255, 55, 39, 176),
                     ),
                   ),
                 ),
@@ -115,7 +115,7 @@ class Signup extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
                     border: Border.all(
-                      color: Colors.purple,
+                      color: Color.fromARGB(255, 42, 151, 194),
                     ),
                     boxShadow: [
                       BoxShadow(
