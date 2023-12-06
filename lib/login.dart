@@ -38,18 +38,19 @@ class Login extends StatelessWidget {
     );
   }
 
-  /// Widget for displaying the input fields (username and password).
+  /// Widget for displaying the input fields (username or email and password).
   Widget _inputField(context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
           decoration: InputDecoration(
-              hintText: "Username",
+              hintText: "Username or Email",
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(18),
                   borderSide: BorderSide.none),
-              fillColor: Colors.purple.withOpacity(0.1),
+              fillColor:
+                  const Color.fromARGB(255, 42, 151, 194).withOpacity(0.1),
               filled: true,
               prefixIcon: const Icon(Icons.person)),
         ),
@@ -60,13 +61,13 @@ class Login extends StatelessWidget {
             border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(18),
                 borderSide: BorderSide.none),
-            fillColor: Colors.purple.withOpacity(0.1),
+            fillColor: const Color.fromARGB(255, 42, 151, 194).withOpacity(0.1),
             filled: true,
             prefixIcon: const Icon(Icons.password),
           ),
           obscureText: true,
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 24),
         ElevatedButton(
           onPressed: () {
             // TODO: Implement login functionality
@@ -74,11 +75,11 @@ class Login extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             shape: const StadiumBorder(),
             padding: const EdgeInsets.symmetric(vertical: 16),
-            backgroundColor: Colors.purple,
+            backgroundColor: const Color.fromARGB(255, 42, 151, 194),
           ),
           child: const Text(
             "Login",
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         )
       ],
@@ -93,7 +94,7 @@ class Login extends StatelessWidget {
       },
       child: const Text(
         "Forgot password?",
-        style: TextStyle(color: Colors.purple),
+        style: TextStyle(color: Color.fromARGB(255, 42, 151, 194)),
       ),
     );
   }
@@ -110,7 +111,7 @@ class Login extends StatelessWidget {
             },
             child: const Text(
               "Sign Up",
-              style: TextStyle(color: Colors.purple),
+              style: TextStyle(color: Color.fromARGB(255, 42, 151, 194)),
             ))
       ],
     );
