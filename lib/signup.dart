@@ -47,7 +47,8 @@ class Signup extends StatelessWidget {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
                               borderSide: BorderSide.none),
-                          fillColor: Colors.purple.withOpacity(0.1),
+                          fillColor: Color.fromARGB(255, 42, 151, 194)
+                              .withOpacity(0.1),
                           filled: true,
                           prefixIcon: const Icon(Icons.person)),
                     ),
@@ -58,7 +59,8 @@ class Signup extends StatelessWidget {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
                               borderSide: BorderSide.none),
-                          fillColor: Colors.purple.withOpacity(0.1),
+                          fillColor: Color.fromARGB(255, 42, 151, 194)
+                              .withOpacity(0.1),
                           filled: true,
                           prefixIcon: const Icon(Icons.email)),
                     ),
@@ -69,7 +71,8 @@ class Signup extends StatelessWidget {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(18),
                             borderSide: BorderSide.none),
-                        fillColor: Colors.purple.withOpacity(0.1),
+                        fillColor:
+                            Color.fromARGB(255, 42, 151, 194).withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
                       ),
@@ -82,7 +85,8 @@ class Signup extends StatelessWidget {
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(18),
                             borderSide: BorderSide.none),
-                        fillColor: Colors.purple.withOpacity(0.1),
+                        fillColor:
+                            Color.fromARGB(255, 42, 151, 194).withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
                       ),
@@ -97,67 +101,19 @@ class Signup extends StatelessWidget {
                     onPressed: () {
                       // TODO: Implement sign-up functionality
                     },
-                    child: const Text(
-                      "Sign up",
-                      style: TextStyle(fontSize: 20),
-                    ),
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
                       padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: const Color.fromARGB(255, 55, 39, 176),
+                      backgroundColor: const Color.fromARGB(255, 42, 151, 194),
+                    ),
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(fontSize: 20, color: Colors.white),
                     ),
                   ),
                 ),
-                const Center(child: Text("Or")),
-                // Sign In with Google Button
-                Container(
-                  height: 45,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(25),
-                    border: Border.all(
-                      color: Color.fromARGB(255, 42, 151, 194),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white.withOpacity(0.5),
-                        spreadRadius: 1,
-                        blurRadius: 1,
-                        offset:
-                            const Offset(0, 1), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: TextButton(
-                    onPressed: () {
-                      // TODO: Implement sign in with Google functionality
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 30.0,
-                          width: 30.0,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage(
-                                    'assets/images/login_signup/google.png'),
-                                fit: BoxFit.cover),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 18),
-                        const Text(
-                          "Sign In with Google",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.purple,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                // Already have an account? Link
+
+                //Already have an account? Link
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
@@ -168,7 +124,8 @@ class Signup extends StatelessWidget {
                         },
                         child: const Text(
                           "Login",
-                          style: TextStyle(color: Colors.purple),
+                          style: TextStyle(
+                              color: Color.fromARGB(255, 42, 151, 194)),
                         ))
                   ],
                 )
