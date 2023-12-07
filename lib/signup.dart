@@ -1,6 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:signup_form_flutter/data/users.dart';
 import 'package:signup_form_flutter/models/user_data.dart';
+import 'package:signup_form_flutter/data/users.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -18,9 +20,12 @@ class _SignupState extends State<Signup> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  String errorText = ""; // Variable to store error messages
+  String usernameErrorText = "";
+  String emailErrorText = "";
+  String passwordErrorText = "";
 
-  String registerUser() {
+  // Function to write user data to 'users.dart'
+  void registerUser() {
     String username = _usernameController.text.trim();
     String email = _emailController.text.trim();
     String password = _passwordController.text;
@@ -28,43 +33,76 @@ class _SignupState extends State<Signup> {
 
     RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     if (!emailRegex.hasMatch(email)) {
-      return "Invalid email address. Try again.";
+      setState(() {
+        emailErrorText = "Invalid email address. Try again.";
+      });
+      return;
     }
 
     if (password != confirmPassword) {
-      return "Passwords do not match.";
+      setState(() {
+        passwordErrorText = "Passwords do not match.";
+      });
+      return;
     }
 
     // Iterating through the saved list of users
     for (UserData user in users) {
       if (user.username == username) {
-        return "Username already taken.";
+        setState(() {
+          usernameErrorText = "Username already taken.";
+        });
+        return;
       }
       if (user.email == email) {
-        return "User already registered. Login instead.";
+        setState(() {
+          emailErrorText = "User already registered. Login instead.";
+        });
+        return;
       }
     }
-    return "";
+
+    // Adding the newly registered user
+    users.add(UserData(username, email, password));
+
+    // Generate Dart code to initialize the 'users' list
+    var dartCode = 'List<UserData> users = [\n';
+    for (var user in users) {
+      dartCode +=
+          '  UserData("${user.username}", "${user.email}", "${user.password}"),\n';
+    }
+    dartCode += '];';
+
+    // Write the Dart code to the 'users.dart' file
+    File('data/users.dart').writeAsStringSync(dartCode);
+    print("User registered to file...");
+
+    // Clear error messages
+    setState(() {
+      usernameErrorText = "";
+      emailErrorText = "";
+      passwordErrorText = "";
+    });
   }
 
-  void showErrorMessageDialog(String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
+  // Function to read user data from 'users.dart'
+  List<UserData> readFile() {
+    try {
+      var jsonString = File('data/users.dart').readAsStringSync();
+
+      // Extract the list of UserData from the Dart code
+      var codeStartIndex = jsonString.indexOf('[');
+      var codeEndIndex = jsonString.lastIndexOf(']');
+      var jsonData = jsonString.substring(codeStartIndex, codeEndIndex + 1);
+
+      // Parse the JSON data into a list of UserData objects
+      return List<UserData>.from(
+        jsonDecode(jsonData).map((userData) => UserData.fromJson(userData)),
+      );
+    } catch (e) {
+      print('Error reading from file: $e');
+      return [];
+    }
   }
 
   @override
@@ -110,12 +148,23 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: const Color.fromARGB(255, 42, 151, 194)
-                            .withOpacity(0.1),
+                        fillColor: usernameErrorText.isNotEmpty
+                            ? Colors.red.withOpacity(0.1)
+                            : const Color.fromARGB(255, 42, 151, 194)
+                                .withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.person),
                       ),
                     ),
+                    //Conditoinally rendering error message
+                    if (usernameErrorText.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          usernameErrorText,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _emailController,
@@ -125,12 +174,23 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: const Color.fromARGB(255, 42, 151, 194)
-                            .withOpacity(0.1),
+                        fillColor: emailErrorText.isNotEmpty
+                            ? Colors.red.withOpacity(0.1)
+                            : const Color.fromARGB(255, 42, 151, 194)
+                                .withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.email),
                       ),
                     ),
+                    //Conditoinally rendering error message
+                    if (emailErrorText.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          emailErrorText,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _passwordController,
@@ -140,8 +200,10 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: const Color.fromARGB(255, 42, 151, 194)
-                            .withOpacity(0.1),
+                        fillColor: passwordErrorText.isNotEmpty
+                            ? Colors.red.withOpacity(0.1)
+                            : const Color.fromARGB(255, 42, 151, 194)
+                                .withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
                       ),
@@ -156,29 +218,41 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: const Color.fromARGB(255, 42, 151, 194)
-                            .withOpacity(0.1),
+                        fillColor: passwordErrorText.isNotEmpty
+                            ? Colors.red.withOpacity(0.1)
+                            : const Color.fromARGB(255, 42, 151, 194)
+                                .withOpacity(0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
                       ),
                       obscureText: true,
                     ),
+                    //Conditoinally rendering error message
+                    if (passwordErrorText.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          passwordErrorText,
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ),
                   ],
                 ),
                 Container(
                   padding: const EdgeInsets.only(top: 3, left: 3),
                   child: ElevatedButton(
                     onPressed: () {
-                      String errorMessage = registerUser();
-                      if (errorMessage.isNotEmpty) {
-                        // If there's an error, show the error message in a dialog
-                        //showErrorMessageDialog(errorMessage);
-                        print(errorMessage);
-                      } else {
-                        // Continue with the signup process
-                        // ...
-                        print("Signing up...");
-                      }
+                      registerUser();
+                      // String errorMessage = registerUser();
+                      // if (errorMessage.isNotEmpty) {
+                      //   // If there's an error, show the error message in a dialog
+                      //   //showErrorMessageDialog(errorMessage);
+                      //   print(errorMessage);
+                      // } else {
+                      //   // Continue with the signup process
+                      //   // ...
+                      //   print("Signing up...");
+                      // }
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
