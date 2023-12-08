@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:signup_form_flutter/models/user_data.dart';
 import 'package:signup_form_flutter/data/users.dart';
+import 'package:http/http.dart' as http;
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -24,8 +25,40 @@ class _SignupState extends State<Signup> {
   String emailErrorText = "";
   String passwordErrorText = "";
 
-  // Function to write user data to 'users1.dart'
-  void registerUser() {
+// Function to log in user using API
+  Future<void> loginUser(String username, String password) async {
+    // API endpoint for user login
+    var loginEndpoint = Uri.parse("http://server.lewibelayneh.com:8989/login");
+
+    // Prepare data for API request
+    var loginData = {
+      "username": username,
+      "password": password,
+    };
+
+    try {
+      // Send POST request to login user
+      var response = await http.post(
+        loginEndpoint,
+        body: jsonEncode(loginData),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        print("User logged in successfully");
+        // Handle successful login, navigate to next screen, etc.
+      } else {
+        print("Error logging in user: ${response.statusCode}");
+        // Handle login error, show error message, etc.
+      }
+    } catch (e) {
+      print("Exception during user login: $e");
+      // Handle exception, show error message, etc.
+    }
+  }
+
+  // Function to register user using API
+  Future<void> registerUser() async {
     String username = _usernameController.text.trim();
     String email = _emailController.text.trim();
     String password = _passwordController.text;
@@ -65,51 +98,36 @@ class _SignupState extends State<Signup> {
     // Adding the newly registered user
     users.add(UserData(username, email, password));
 
-    // Generate Dart code to initialize the 'users' list
-    var dartCode = 'List<UserData> users = [\n';
-    for (var user in users) {
-      dartCode +=
-          '  UserData("${user.username}", "${user.email}", "${user.password}"),\n';
-    }
-    dartCode += '];';
+    var userData = {
+      "username": username,
+      "password": password,
+    };
 
-    // Write the Dart code to the 'users1.dart' file in the 'lib/dart/' directory
-    var filePath = 'dart/users1.dart';
+    try {
+      // API endpoint for user registration
+      var createUserEndpoint =
+          Uri.parse("http://server.lewibelayneh.com:8989/create_user");
 
-    // Check if the file already exists
-    if (File(filePath).existsSync()) {
-      print("File already exists: $filePath");
-      // You can choose to skip the writing or take any other action
-    } else {
-      // Create file
-      var file = File(filePath);
-      try {
-        // Create the file
-        file.createSync(recursive: true);
-        // Write registered user to file in dart code
-        file.writeAsStringSync(dartCode);
+      // Send POST request to create user
+      var response = await http.post(
+        createUserEndpoint,
+        body: jsonEncode(userData),
+        headers: {"Content-Type": "application/json"},
+      );
 
-        print('File created successfully: $filePath');
-      } catch (e) {
-        print('Error creating file: $e');
+      if (response.statusCode == 200) {
+        print("User registered successfully");
+
+        // If registration is successful, you might want to handle login here
+        await loginUser(username, password);
+      } else {
+        print("Error registering user: ${response.statusCode}");
+        // Handle error, show error message, etc.
       }
-      // Write the Dart code to the file
-      print("User registered to file: $filePath");
+    } catch (e) {
+      print("Exception during user registration: $e");
+      // Handle exception, show error message, etc.
     }
-
-    // Check if the file is created successfully
-    if (File(filePath).existsSync()) {
-      print("User registered to file: $filePath");
-    } else {
-      print("Failed to create the file: $filePath");
-    }
-
-    // Clear error messages
-    setState(() {
-      usernameErrorText = "";
-      emailErrorText = "";
-      passwordErrorText = "";
-    });
   }
 
   // Function to read user data from 'users1.dart'
