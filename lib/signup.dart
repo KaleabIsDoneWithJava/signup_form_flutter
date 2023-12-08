@@ -74,8 +74,28 @@ class _SignupState extends State<Signup> {
     dartCode += '];';
 
     // Write the Dart code to the 'users1.dart' file in the 'lib/dart/' directory
-    var filePath = 'lib/dart/users1.dart';
-    File(filePath).writeAsStringSync(dartCode);
+    var filePath = 'dart/users1.dart';
+
+    // Check if the file already exists
+    if (File(filePath).existsSync()) {
+      print("File already exists: $filePath");
+      // You can choose to skip the writing or take any other action
+    } else {
+      // Create file
+      var file = File(filePath);
+      try {
+        // Create the file
+        file.createSync(recursive: true);
+        // Write registered user to file in dart code
+        file.writeAsStringSync(dartCode);
+
+        print('File created successfully: $filePath');
+      } catch (e) {
+        print('Error creating file: $e');
+      }
+      // Write the Dart code to the file
+      print("User registered to file: $filePath");
+    }
 
     // Check if the file is created successfully
     if (File(filePath).existsSync()) {
