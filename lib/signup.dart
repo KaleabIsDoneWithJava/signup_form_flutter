@@ -119,7 +119,8 @@ class _SignupState extends State<Signup> {
         print("User registered successfully");
 
         // If registration is successful, you might want to handle login here
-        await loginUser(username, password);
+        // redirect to loginpage
+        //await loginUser(username, password);
       } else {
         print("Error registering user: ${response.statusCode}");
         // Handle error, show error message, etc.
