@@ -24,7 +24,7 @@ class _SignupState extends State<Signup> {
   String emailErrorText = "";
   String passwordErrorText = "";
 
-  // Function to write user data to 'users.dart'
+  // Function to write user data to 'users1.dart'
   void registerUser() {
     String username = _usernameController.text.trim();
     String email = _emailController.text.trim();
@@ -73,9 +73,16 @@ class _SignupState extends State<Signup> {
     }
     dartCode += '];';
 
-    // Write the Dart code to the 'users.dart' file
-    File('data/users.dart').writeAsStringSync(dartCode);
-    print("User registered to file...");
+    // Write the Dart code to the 'users1.dart' file in the 'lib/dart/' directory
+    var filePath = 'lib/dart/users1.dart';
+    File(filePath).writeAsStringSync(dartCode);
+
+    // Check if the file is created successfully
+    if (File(filePath).existsSync()) {
+      print("User registered to file: $filePath");
+    } else {
+      print("Failed to create the file: $filePath");
+    }
 
     // Clear error messages
     setState(() {
@@ -85,10 +92,11 @@ class _SignupState extends State<Signup> {
     });
   }
 
-  // Function to read user data from 'users.dart'
+  // Function to read user data from 'users1.dart'
+  // Just for testing
   List<UserData> readFile() {
     try {
-      var jsonString = File('data/users.dart').readAsStringSync();
+      var jsonString = File('lib/dart/users1.dart').readAsStringSync();
 
       // Extract the list of UserData from the Dart code
       var codeStartIndex = jsonString.indexOf('[');
