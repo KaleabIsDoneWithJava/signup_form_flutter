@@ -1,10 +1,78 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
-/// A Flutter widget representing the login page.
-class Login extends StatelessWidget {
-  const Login({super.key});
+class Login extends StatefulWidget {
+  const Login({Key? key}) : super(key: key);
 
-  void loginHandler() {}
+  @override
+  State<Login> createState() {
+    return _LoginState();
+  }
+}
+
+class _LoginState extends State<Login> {
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> loginUser(String username, String password) async {
+    var loginEndpoint = Uri.parse("http://server.lewibelayneh.com:8989/login");
+
+    var loginData = {
+      "username": username,
+      "password": password,
+    };
+
+    try {
+      var response = await http.post(
+        loginEndpoint,
+        body: jsonEncode(loginData),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        _showDialog("Success", "User logged in successfully");
+        // Handle successful login, navigate to next screen, etc.
+      } else {
+        _showDialog("Error", "Error logging in user: ${response.statusCode}");
+        // Handle login error, show error message, etc.
+      }
+    } catch (e) {
+      _showDialog("Exception", "Exception during user login: $e");
+      // Handle exception, show error message, etc.
+    }
+  }
+
+  void _showDialog(String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _validateAndLogin() {
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
+
+    if (username.isEmpty || password.isEmpty) {
+      _showDialog("Error", "Please enter both username and password.");
+    } else {
+      loginUser(username, password);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,10 +84,10 @@ class Login extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _header(context),
-              _inputField(context),
-              _forgotPassword(context),
-              _signup(context),
+              _header(),
+              _inputField(),
+              _forgotPassword(),
+              _signup(),
             ],
           ),
         ),
@@ -27,42 +95,44 @@ class Login extends StatelessWidget {
     );
   }
 
-  /// Widget for displaying the header text.
-  Widget _header(context) {
+  Widget _header() {
     return const Column(
       children: [
         Text(
           "Welcome Back",
           style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
         ),
-        Text("Enter your credential to login"),
+        Text("Enter your credentials to login"),
       ],
     );
   }
 
-  /// Widget for displaying the input fields (username or email and password).
-  Widget _inputField(context) {
+  Widget _inputField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
+          controller: _usernameController,
           decoration: InputDecoration(
-              hintText: "Username or Email",
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(18),
-                  borderSide: BorderSide.none),
-              fillColor:
-                  const Color.fromARGB(255, 42, 151, 194).withOpacity(0.1),
-              filled: true,
-              prefixIcon: const Icon(Icons.person)),
+            hintText: "Username or Email",
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
+            fillColor: const Color.fromARGB(255, 42, 151, 194).withOpacity(0.1),
+            filled: true,
+            prefixIcon: const Icon(Icons.person),
+          ),
         ),
         const SizedBox(height: 10),
         TextField(
+          controller: _passwordController,
           decoration: InputDecoration(
             hintText: "Password",
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(18),
-                borderSide: BorderSide.none),
+              borderRadius: BorderRadius.circular(18),
+              borderSide: BorderSide.none,
+            ),
             fillColor: const Color.fromARGB(255, 42, 151, 194).withOpacity(0.1),
             filled: true,
             prefixIcon: const Icon(Icons.password),
@@ -72,8 +142,7 @@ class Login extends StatelessWidget {
         const SizedBox(height: 48),
         ElevatedButton(
           onPressed: () {
-            // TODO: Implement login functionality
-            loginHandler();
+            _validateAndLogin();
           },
           style: ElevatedButton.styleFrom(
             shape: const StadiumBorder(),
@@ -89,8 +158,7 @@ class Login extends StatelessWidget {
     );
   }
 
-  /// Widget for displaying the "Forgot password?" link.
-  Widget _forgotPassword(context) {
+  Widget _forgotPassword() {
     return TextButton(
       onPressed: () {
         // TODO: Implement forgot password functionality
@@ -102,20 +170,20 @@ class Login extends StatelessWidget {
     );
   }
 
-  /// Widget for displaying the "Sign Up" link.
-  Widget _signup(context) {
+  Widget _signup() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Text("Don't have an account? "),
         TextButton(
-            onPressed: () {
-              // TODO: Implement sign up functionality
-            },
-            child: const Text(
-              "Sign Up",
-              style: TextStyle(color: Color.fromARGB(255, 42, 151, 194)),
-            ))
+          onPressed: () {
+            // TODO: Implement sign up functionality
+          },
+          child: const Text(
+            "Sign Up",
+            style: TextStyle(color: Color.fromARGB(255, 42, 151, 194)),
+          ),
+        )
       ],
     );
   }

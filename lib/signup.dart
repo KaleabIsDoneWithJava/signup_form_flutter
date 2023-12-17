@@ -95,8 +95,8 @@ class _SignupState extends State<Signup> {
       }
     }
 
+    //users.add(UserData(username, email, password));
     // Adding the newly registered user
-    users.add(UserData(username, email, password));
 
     var userData = {
       "username": username,
@@ -128,27 +128,6 @@ class _SignupState extends State<Signup> {
     } catch (e) {
       print("Exception during user registration: $e");
       // Handle exception, show error message, etc.
-    }
-  }
-
-  // Function to read user data from 'users1.dart'
-  // Just for testing
-  List<UserData> readFile() {
-    try {
-      var jsonString = File('lib/dart/users1.dart').readAsStringSync();
-
-      // Extract the list of UserData from the Dart code
-      var codeStartIndex = jsonString.indexOf('[');
-      var codeEndIndex = jsonString.lastIndexOf(']');
-      var jsonData = jsonString.substring(codeStartIndex, codeEndIndex + 1);
-
-      // Parse the JSON data into a list of UserData objects
-      return List<UserData>.from(
-        jsonDecode(jsonData).map((userData) => UserData.fromJson(userData)),
-      );
-    } catch (e) {
-      print('Error reading from file: $e');
-      return [];
     }
   }
 
