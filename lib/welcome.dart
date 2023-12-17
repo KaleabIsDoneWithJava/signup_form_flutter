@@ -32,10 +32,13 @@ class Welcome extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 shape: const StadiumBorder(),
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: const Color.fromARGB(255, 194, 42, 42),
+                backgroundColor: const Color.fromARGB(255, 238, 31, 31),
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Logout'),
+              child: const Text(
+                'Logout',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
             ),
           ],
         ),

@@ -23,9 +23,9 @@ class _SignupState extends State<Signup> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  String usernameErrorText = "";
-  String emailErrorText = "";
-  String passwordErrorText = "";
+  bool usernameError = false;
+  bool emailError = false;
+  bool passwordError = false;
 
   // Function to register user using API
   Future<void> registerUser() async {
@@ -50,20 +50,20 @@ class _SignupState extends State<Signup> {
       );
     }
 
-    void navigateToLogin(String username) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Login(),
-        ),
-      );
-    }
+    // void navigateToLogin(String username) {
+    //   Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //       builder: (context) => const Login(),
+    //     ),
+    //   );
+    // }
 
     RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     if (!emailRegex.hasMatch(email)) {
-      // setState(() {
-      //   emailErrorText = "Invalid email address. Try again.";
-      // });
+      setState(() {
+        emailError = true;
+      });
       _showDialog("Invalid email", "Invalid email address. Try again.");
       _emailController.clear();
       //clearInputFields();
@@ -72,7 +72,7 @@ class _SignupState extends State<Signup> {
 
     if (password != confirmPassword) {
       setState(() {
-        passwordErrorText = "Passwords do not match.";
+        passwordError = true;
       });
       _showDialog("Not a match", "Passwords do not match.");
       _passwordController.clear();
@@ -105,14 +105,12 @@ class _SignupState extends State<Signup> {
         _showDialog("Success", "User registered in successfully");
 
         // Handle successful login, navigate to the next screen, etc.
-      } else if (response.statusCode == 404) {
-        _showDialog(
-            "Account Not Found", "Don't have an account? Register below.");
-        clearInputFields();
       } else if (response.statusCode == 408) {
         _showDialog("Slow Network", "The Reqeust timed out.");
       } else if (response.statusCode == 409) {
-        navigateToLogin(username);
+        // navigateToLogin(username);
+        usernameError = true;
+        _usernameController.clear();
         _showDialog("User already exists", "Login instead.");
       } else if (response.statusCode > 400 && response.statusCode < 500) {
         _showDialog(
@@ -192,7 +190,7 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: usernameErrorText.isNotEmpty
+                        fillColor: usernameError
                             ? Colors.red.withOpacity(0.1)
                             : const Color.fromARGB(255, 42, 151, 194)
                                 .withOpacity(0.1),
@@ -200,15 +198,7 @@ class _SignupState extends State<Signup> {
                         prefixIcon: const Icon(Icons.person),
                       ),
                     ),
-                    //Conditoinally rendering error message
-                    if (usernameErrorText.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          usernameErrorText,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ),
+
                     const SizedBox(height: 20),
                     TextField(
                       controller: _emailController,
@@ -218,7 +208,7 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: emailErrorText.isNotEmpty
+                        fillColor: emailError
                             ? Colors.red.withOpacity(0.1)
                             : const Color.fromARGB(255, 42, 151, 194)
                                 .withOpacity(0.1),
@@ -227,14 +217,7 @@ class _SignupState extends State<Signup> {
                       ),
                     ),
                     //Conditoinally rendering error message
-                    if (emailErrorText.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          emailErrorText,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ),
+
                     const SizedBox(height: 20),
                     TextField(
                       controller: _passwordController,
@@ -244,7 +227,7 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: passwordErrorText.isNotEmpty
+                        fillColor: passwordError
                             ? Colors.red.withOpacity(0.1)
                             : const Color.fromARGB(255, 42, 151, 194)
                                 .withOpacity(0.1),
@@ -262,7 +245,7 @@ class _SignupState extends State<Signup> {
                           borderRadius: BorderRadius.circular(18),
                           borderSide: BorderSide.none,
                         ),
-                        fillColor: passwordErrorText.isNotEmpty
+                        fillColor: passwordError
                             ? Colors.red.withOpacity(0.1)
                             : const Color.fromARGB(255, 42, 151, 194)
                                 .withOpacity(0.1),
@@ -271,15 +254,6 @@ class _SignupState extends State<Signup> {
                       ),
                       obscureText: true,
                     ),
-                    //Conditoinally rendering error message
-                    if (passwordErrorText.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          passwordErrorText,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      ),
                   ],
                 ),
                 Container(
