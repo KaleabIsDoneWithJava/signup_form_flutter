@@ -34,12 +34,12 @@ class _SignupState extends State<Signup> {
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
-    void clearInputFields() {
-      _usernameController.clear();
-      _emailController.clear();
-      _passwordController.clear();
-      _confirmPasswordController.clear();
-    }
+    // void clearInputFields() {
+    //   _usernameController.clear();
+    //   _emailController.clear();
+    //   _passwordController.clear();
+    //   _confirmPasswordController.clear();
+    // }
 
     void navigateToWelcome(String username) {
       Navigator.push(
@@ -50,14 +50,34 @@ class _SignupState extends State<Signup> {
       );
     }
 
-    // void navigateToLogin(String username) {
-    //   Navigator.push(
-    //     context,
-    //     MaterialPageRoute(
-    //       builder: (context) => const Login(),
-    //     ),
-    //   );
-    // }
+    String validateUsername(String username) {
+      // Define the regex pattern
+      final RegExp regex = RegExp(r'^[a-zA-Z0-9]+$');
+
+      // Check if the username contains any slashes
+      if (username.contains('/')) {
+        _showDialog('Username Error', 'Username cannot contain slashes.');
+        usernameError = true;
+        return "Username Error";
+      }
+
+      // Check if the username matches the alphanumeric pattern
+      if (!regex.hasMatch(username)) {
+        _showDialog('Username Error',
+            'Username can only contain alphanumeric symbols.');
+        usernameError = true;
+        return "Username Error";
+      }
+
+      // Convert the username to lowercase
+      final lowercaseUsername = username.toLowerCase();
+      username = lowercaseUsername;
+      usernameError = false; //Just in case.
+
+      return username;
+      // Now you can use the converted username (lowercaseUsername) as needed
+      //_showDialog('Success', 'Valid username: $lowercaseUsername');
+    }
 
     RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     if (!emailRegex.hasMatch(email)) {
@@ -67,9 +87,9 @@ class _SignupState extends State<Signup> {
       _showDialog("Invalid email", "Invalid email address. Try again.");
       _emailController.clear();
       //clearInputFields();
-      return;
+      //return;
     }
-
+    validateUsername(username);
     if (password != confirmPassword) {
       setState(() {
         passwordError = true;
@@ -79,6 +99,10 @@ class _SignupState extends State<Signup> {
       _confirmPasswordController.clear();
       //clearInputFields();
 
+      //return;
+    }
+
+    if (emailError || passwordError) {
       return;
     }
 
@@ -123,7 +147,6 @@ class _SignupState extends State<Signup> {
       _showDialog("Exception", "Exception during user login: $e");
       // Handle exception, show an error message, etc.
     }
-
     //clearInputFields();
   }
 
