@@ -36,7 +36,8 @@ class _LoginState extends State<Login> {
         _showDialog("Success", "User logged in successfully");
         // Handle successful login, navigate to the next screen, etc.
       } else if (response.statusCode == 404) {
-        _showDialog("User Not Found", "Invalid Username or Password");
+        _showDialog("User Not Found",
+            "Invalid Username or Password.\n\nDon't have an account? Register below.");
       } else {
         _showDialog("Error", "Error logging in user: ${response.statusCode}");
         // Handle login error, show an error message, etc.
@@ -90,7 +91,7 @@ class _LoginState extends State<Login> {
             children: [
               _header(),
               _inputField(),
-              _forgotPassword(),
+              // _forgotPassword(),
               _signup(),
             ],
           ),
