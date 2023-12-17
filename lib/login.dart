@@ -17,6 +17,11 @@ class _LoginState extends State<Login> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  void clearInputFields() {
+    _usernameController.clear();
+    _passwordController.clear();
+  }
+
   Future<void> loginUser(String username, String password) async {
     var loginEndpoint = Uri.parse("http://server.lewibelayneh.com:8989/login");
 
@@ -46,6 +51,7 @@ class _LoginState extends State<Login> {
       _showDialog("Exception", "Exception during user login: $e");
       // Handle exception, show an error message, etc.
     }
+    clearInputFields();
   }
 
   void _showDialog(String title, String content) {

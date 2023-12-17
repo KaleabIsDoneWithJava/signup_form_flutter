@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
+//import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:signup_form_flutter/login.dart';
-import 'package:signup_form_flutter/models/user_data.dart';
-import 'package:signup_form_flutter/data/users.dart';
+//import 'package:signup_form_flutter/models/user_data.dart';
+//import 'package:signup_form_flutter/data/users.dart';
 import 'package:http/http.dart' as http;
 
 class Signup extends StatefulWidget {
@@ -65,11 +65,20 @@ class _SignupState extends State<Signup> {
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
 
+    void clearInputFields() {
+      _usernameController.clear();
+      _emailController.clear();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
+    }
+
     RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     if (!emailRegex.hasMatch(email)) {
-      setState(() {
-        emailErrorText = "Invalid email address. Try again.";
-      });
+      // setState(() {
+      //   emailErrorText = "Invalid email address. Try again.";
+      // });
+      _showDialog("Invalid email", "Invalid email address. Try again.");
+      clearInputFields();
       return;
     }
 
@@ -77,27 +86,12 @@ class _SignupState extends State<Signup> {
       setState(() {
         passwordErrorText = "Passwords do not match.";
       });
+      _showDialog("Not a match", "Passwords do not match.");
+
+      clearInputFields();
+
       return;
     }
-
-    // Iterating through the saved list of users
-    for (UserData user in users) {
-      if (user.username == username) {
-        setState(() {
-          usernameErrorText = "Username already taken.";
-        });
-        return;
-      }
-      if (user.email == email) {
-        setState(() {
-          emailErrorText = "User already registered. Login instead.";
-        });
-        return;
-      }
-    }
-
-    //users.add(UserData(username, email, password));
-    // Adding the newly registered user
 
     var userData = {
       "username": username,
@@ -117,19 +111,37 @@ class _SignupState extends State<Signup> {
       );
 
       if (response.statusCode == 200) {
-        print("User registered successfully");
-
-        // If registration is successful, you might want to handle login here
-        // redirect to loginpage
-        //await loginUser(username, password);
+        _showDialog("Success", "User logged in successfully");
+        // Handle successful login, navigate to the next screen, etc.
       } else {
-        print("Error registering user: ${response.statusCode}");
-        // Handle error, show error message, etc.
+        _showDialog("Error", "Error logging in user: ${response.statusCode}");
+        // Handle login error, show an error message, etc.
       }
     } catch (e) {
-      print("Exception during user registration: $e");
-      // Handle exception, show error message, etc.
+      _showDialog("Exception", "Exception during user login: $e");
+      // Handle exception, show an error message, etc.
     }
+    clearInputFields();
+  }
+
+  void _showDialog(String title, String content) {
+    showDialog(
+      context: context, // Use the context from the State class
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
