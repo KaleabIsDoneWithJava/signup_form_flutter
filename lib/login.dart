@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:signup_form_flutter/signup.dart';
+
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
 
@@ -32,20 +34,20 @@ class _LoginState extends State<Login> {
 
       if (response.statusCode == 200) {
         _showDialog("Success", "User logged in successfully");
-        // Handle successful login, navigate to next screen, etc.
+        // Handle successful login, navigate to the next screen, etc.
       } else {
         _showDialog("Error", "Error logging in user: ${response.statusCode}");
-        // Handle login error, show error message, etc.
+        // Handle login error, show an error message, etc.
       }
     } catch (e) {
       _showDialog("Exception", "Exception during user login: $e");
-      // Handle exception, show error message, etc.
+      // Handle exception, show an error message, etc.
     }
   }
 
   void _showDialog(String title, String content) {
     showDialog(
-      context: context,
+      context: context, // Use the context from the State class
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(title),
@@ -178,6 +180,7 @@ class _LoginState extends State<Login> {
         TextButton(
           onPressed: () {
             // TODO: Implement sign up functionality
+            Signup();
           },
           child: const Text(
             "Sign Up",
