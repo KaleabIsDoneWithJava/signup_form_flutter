@@ -180,7 +180,10 @@ class _LoginState extends State<Login> {
         TextButton(
           onPressed: () {
             // TODO: Implement sign up functionality
-            Signup();
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Signup()),
+            );
           },
           child: const Text(
             "Sign Up",

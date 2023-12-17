@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:signup_form_flutter/login.dart';
 import 'package:signup_form_flutter/models/user_data.dart';
 import 'package:signup_form_flutter/data/users.dart';
 import 'package:http/http.dart' as http;
@@ -298,6 +299,10 @@ class _SignupState extends State<Signup> {
                     TextButton(
                       onPressed: () {
                         // TODO: Implement login navigation
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => Login()),
+                        );
                       },
                       child: const Text(
                         "Login",
