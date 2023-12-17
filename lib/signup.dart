@@ -270,16 +270,6 @@ class _SignupState extends State<Signup> {
                   child: ElevatedButton(
                     onPressed: () {
                       registerUser();
-                      // String errorMessage = registerUser();
-                      // if (errorMessage.isNotEmpty) {
-                      //   // If there's an error, show the error message in a dialog
-                      //   //showErrorMessageDialog(errorMessage);
-                      //   print(errorMessage);
-                      // } else {
-                      //   // Continue with the signup process
-                      //   // ...
-                      //   print("Signing up...");
-                      // }
                     },
                     style: ElevatedButton.styleFrom(
                       shape: const StadiumBorder(),
