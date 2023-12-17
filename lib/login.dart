@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:signup_form_flutter/signup.dart';
+import 'package:signup_form_flutter/welcome.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -22,6 +23,15 @@ class _LoginState extends State<Login> {
     _passwordController.clear();
   }
 
+  void navigateToWelcome(String username) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => Welcome(username: username),
+      ),
+    );
+  }
+
   Future<void> loginUser(String username, String password) async {
     var loginEndpoint = Uri.parse("http://server.lewibelayneh.com:8989/login");
 
@@ -38,11 +48,16 @@ class _LoginState extends State<Login> {
       );
 
       if (response.statusCode == 200) {
-        _showDialog("Success", "User logged in successfully");
+        // _showDialog("Success", "User logged in successfully");
+        navigateToWelcome(username);
+        // Inside your login or signup page
+
         // Handle successful login, navigate to the next screen, etc.
       } else if (response.statusCode == 404) {
         _showDialog(
             "Account Not Found", "Don't have an account? Register below.");
+      } else if (response.statusCode == 408) {
+        _showDialog("Slow Network", "The Reqeust timed out.");
       } else if (response.statusCode > 400 && response.statusCode < 500) {
         _showDialog(
             "Login Error", "Invalid Username or Password.\n Try again.");

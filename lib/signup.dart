@@ -5,6 +5,7 @@ import 'package:signup_form_flutter/login.dart';
 //import 'package:signup_form_flutter/models/user_data.dart';
 //import 'package:signup_form_flutter/data/users.dart';
 import 'package:http/http.dart' as http;
+import 'package:signup_form_flutter/welcome.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -26,38 +27,6 @@ class _SignupState extends State<Signup> {
   String emailErrorText = "";
   String passwordErrorText = "";
 
-// Function to log in user using API
-  Future<void> loginUser(String username, String password) async {
-    // API endpoint for user login
-    var loginEndpoint = Uri.parse("http://server.lewibelayneh.com:8989/login");
-
-    // Prepare data for API request
-    var loginData = {
-      "username": username,
-      "password": password,
-    };
-
-    try {
-      // Send POST request to login user
-      var response = await http.post(
-        loginEndpoint,
-        body: jsonEncode(loginData),
-        headers: {"Content-Type": "application/json"},
-      );
-
-      if (response.statusCode == 200) {
-        print("User logged in successfully");
-        // Handle successful login, navigate to next screen, etc.
-      } else {
-        print("Error logging in user: ${response.statusCode}");
-        // Handle login error, show error message, etc.
-      }
-    } catch (e) {
-      print("Exception during user login: $e");
-      // Handle exception, show error message, etc.
-    }
-  }
-
   // Function to register user using API
   Future<void> registerUser() async {
     String username = _usernameController.text.trim();
@@ -72,13 +41,32 @@ class _SignupState extends State<Signup> {
       _confirmPasswordController.clear();
     }
 
+    void navigateToWelcome(String username) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => Welcome(username: username),
+        ),
+      );
+    }
+
+    void navigateToLogin(String username) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Login(),
+        ),
+      );
+    }
+
     RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
     if (!emailRegex.hasMatch(email)) {
       // setState(() {
       //   emailErrorText = "Invalid email address. Try again.";
       // });
       _showDialog("Invalid email", "Invalid email address. Try again.");
-      clearInputFields();
+      _emailController.clear();
+      //clearInputFields();
       return;
     }
 
@@ -87,8 +75,9 @@ class _SignupState extends State<Signup> {
         passwordErrorText = "Passwords do not match.";
       });
       _showDialog("Not a match", "Passwords do not match.");
-
-      clearInputFields();
+      _passwordController.clear();
+      _confirmPasswordController.clear();
+      //clearInputFields();
 
       return;
     }
@@ -111,8 +100,23 @@ class _SignupState extends State<Signup> {
       );
 
       if (response.statusCode == 200) {
-        _showDialog("Success", "User logged in successfully");
+        navigateToWelcome(username);
+        // Inside your login or signup page
+        _showDialog("Success", "User registered in successfully");
+
         // Handle successful login, navigate to the next screen, etc.
+      } else if (response.statusCode == 404) {
+        _showDialog(
+            "Account Not Found", "Don't have an account? Register below.");
+        clearInputFields();
+      } else if (response.statusCode == 408) {
+        _showDialog("Slow Network", "The Reqeust timed out.");
+      } else if (response.statusCode == 409) {
+        navigateToLogin(username);
+        _showDialog("User already exists", "Login instead.");
+      } else if (response.statusCode > 400 && response.statusCode < 500) {
+        _showDialog(
+            "Signup Error", "Invalid Username or Password.\n Try again.");
       } else {
         _showDialog("Error", "Error logging in user: ${response.statusCode}");
         // Handle login error, show an error message, etc.
@@ -121,7 +125,8 @@ class _SignupState extends State<Signup> {
       _showDialog("Exception", "Exception during user login: $e");
       // Handle exception, show an error message, etc.
     }
-    clearInputFields();
+
+    //clearInputFields();
   }
 
   void _showDialog(String title, String content) {

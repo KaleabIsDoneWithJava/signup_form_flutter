@@ -1,23 +1,25 @@
 import 'package:flutter/material.dart';
 
-class WelcomePage extends StatelessWidget {
+class Welcome extends StatelessWidget {
   final String username;
 
-  WelcomePage({required this.username});
+  const Welcome({super.key, required this.username});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Welcome Page'),
-      ),
-      body: Center(
+      // appBar: AppBar(
+      //   title: const Text('Welcome Page'),
+      // ),
+      body: Container(
+        margin: const EdgeInsets.all(24),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Welcome Back, $username!',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              'Welcome back, $username!',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -30,9 +32,10 @@ class WelcomePage extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 shape: const StadiumBorder(),
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                backgroundColor: Color.fromARGB(255, 194, 42, 42),
+                backgroundColor: const Color.fromARGB(255, 194, 42, 42),
+                foregroundColor: Colors.white,
               ),
-              child: Text('Logout'),
+              child: const Text('Logout'),
             ),
           ],
         ),
