@@ -35,6 +35,8 @@ class _LoginState extends State<Login> {
       if (response.statusCode == 200) {
         _showDialog("Success", "User logged in successfully");
         // Handle successful login, navigate to the next screen, etc.
+      } else if (response.statusCode == 404) {
+        _showDialog("User Not Found", "Invalid Username or Password");
       } else {
         _showDialog("Error", "Error logging in user: ${response.statusCode}");
         // Handle login error, show an error message, etc.
