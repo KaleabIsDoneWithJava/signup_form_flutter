@@ -1,7 +1,6 @@
 # signup_form_flutter
 
-A new Flutter project.
-
+Simple signup and Login form in Flutter. Class Assignment.
 ## Getting Started
 
 This project is a starting point for a Flutter application.
